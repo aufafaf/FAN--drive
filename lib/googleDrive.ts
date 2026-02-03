@@ -48,11 +48,25 @@ export async function getMediaFile(fileId: string) {
   }
 }
 
-export function formatFileSize(bytes?: string): string {
+// export function formatFileSize(bytes?: string): string {
+//   if (!bytes) return 'N/A';
+//   const size = parseInt(bytes, 10);
+//   if (size < 1024) return `${size} B`;
+//   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+//   if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+//   return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+// }
+
+export function formatFileSize(bytes?: string | null): string {
   if (!bytes) return 'N/A';
+
   const size = parseInt(bytes, 10);
+  if (isNaN(size)) return 'N/A';
+
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  if (size < 1024 * 1024 * 1024)
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+
   return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }

@@ -1,10 +1,10 @@
 export interface MediaFile {
   id: string;
   name: string;
-  thumbnailLink?: string;
+  thumbnailLink?: string | null;
   mimeType: string;
-  size?: string;
-  webContentLink?: string;
+  size?: string | null;
+  webContentLink?: string | null;
   isVideo: boolean;
   isImage: boolean;
 }

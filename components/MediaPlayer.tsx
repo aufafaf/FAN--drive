@@ -16,9 +16,13 @@ export default function MediaPlayer({ media }: MediaPlayerProps) {
         <video
           controls
           className="video-player"
-          poster={media.thumbnailLink}
+          // poster={media.thumbnailLink}
+          poster={media.thumbnailLink || undefined}
+
         >
-          <source src={media.webContentLink} type={media.mimeType} />
+          {/* <source src={media.webContentLink} type={media.mimeType} /> */}
+          <source src={media.webContentLink ?? undefined} type={media.mimeType} />
+
           Browser Anda tidak mendukung video player.
         </video>
       </div>
@@ -30,7 +34,9 @@ export default function MediaPlayer({ media }: MediaPlayerProps) {
       <div className="media-player">
         {!imageError ? (
           <img
-            src={media.webContentLink || media.thumbnailLink}
+            // src={media.webContentLink || media.thumbnailLink}
+            src={media.webContentLink ?? media.thumbnailLink ?? undefined}
+
             alt={media.name}
             className="image-viewer"
             onError={() => setImageError(true)}
