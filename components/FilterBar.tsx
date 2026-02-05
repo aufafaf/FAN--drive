@@ -1,6 +1,86 @@
+// 'use client';
+
+// import { Search, Grid, Video, Image, Heart } from 'lucide-react';
+// import { FilterType } from '@/types';
+
+// interface FilterBarProps {
+//   currentFilter: FilterType;
+//   onFilterChange: (filter: FilterType) => void;
+//   searchQuery: string;
+//   onSearchChange: (query: string) => void;
+//   showFavoritesOnly: boolean;
+//   onToggleFavoritesOnly: () => void;
+//   totalCount: number;
+//   filteredCount: number;
+// }
+
+// export default function FilterBar({
+//   currentFilter,
+//   onFilterChange,
+//   searchQuery,
+//   onSearchChange,
+//   showFavoritesOnly,
+//   onToggleFavoritesOnly,
+//   totalCount,
+//   filteredCount,
+// }: FilterBarProps) {
+//   return (
+//     <div className="filter-bar">
+//       <div className="filter-controls">
+//         <div className="search-wrapper">
+//           <Search className="search-icon" size={20} />
+//           <input
+//             type="text"
+//             placeholder="Cari media..."
+//             value={searchQuery}
+//             onChange={(e) => onSearchChange(e.target.value)}
+//             className="search-input"
+//           />
+//         </div>
+
+//         <div className="filter-buttons">
+//           <button
+//             className={`filter-btn ${currentFilter === 'all' ? 'active' : ''}`}
+//             onClick={() => onFilterChange('all')}
+//           >
+//             <Grid size={18} />
+//             Semua
+//           </button>
+//           <button
+//             className={`filter-btn ${currentFilter === 'video' ? 'active' : ''}`}
+//             onClick={() => onFilterChange('video')}
+//           >
+//             <Video size={18} />
+//             Video
+//           </button>
+//           <button
+//             className={`filter-btn ${currentFilter === 'image' ? 'active' : ''}`}
+//             onClick={() => onFilterChange('image')}
+//           >
+//             <Image size={18} />
+//             Foto
+//           </button>
+//           <button
+//             className={`filter-btn favorite-btn ${showFavoritesOnly ? 'active' : ''}`}
+//             onClick={onToggleFavoritesOnly}
+//           >
+//             <Heart size={18} fill={showFavoritesOnly ? 'currentColor' : 'none'} />
+//             Favorit
+//           </button>
+//         </div>
+//       </div>
+
+//       <div className="media-count">
+//         Menampilkan <span className="count-highlight">{filteredCount}</span> dari{' '}
+//         <span className="count-highlight">{totalCount}</span> media
+//       </div>
+//     </div>
+//   );
+// }
+
 'use client';
 
-import { Search, Grid, Video, Image, Heart } from 'lucide-react';
+import { Search, Grid, Video, Image, Heart, RefreshCw } from 'lucide-react';
 import { FilterType } from '@/types';
 
 interface FilterBarProps {
@@ -10,6 +90,8 @@ interface FilterBarProps {
   onSearchChange: (query: string) => void;
   showFavoritesOnly: boolean;
   onToggleFavoritesOnly: () => void;
+  onRefresh: () => void;
+  isRefreshing?: boolean;
   totalCount: number;
   filteredCount: number;
 }
@@ -21,6 +103,8 @@ export default function FilterBar({
   onSearchChange,
   showFavoritesOnly,
   onToggleFavoritesOnly,
+  onRefresh,
+  isRefreshing = false,
   totalCount,
   filteredCount,
 }: FilterBarProps) {
@@ -66,6 +150,18 @@ export default function FilterBar({
           >
             <Heart size={18} fill={showFavoritesOnly ? 'currentColor' : 'none'} />
             Favorit
+          </button>
+          <button
+            className="filter-btn refresh-btn"
+            onClick={onRefresh}
+            disabled={isRefreshing}
+            title="Refresh data dari Google Drive"
+          >
+            <RefreshCw 
+              size={18} 
+              className={isRefreshing ? 'spinning' : ''} 
+            />
+            Refresh
           </button>
         </div>
       </div>
