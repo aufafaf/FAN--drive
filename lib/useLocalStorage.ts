@@ -7,8 +7,10 @@ const STORAGE_KEY = 'gdrive-gallery-data';
 
 export function useLocalStorage() {
   const [data, setData] = useState<LocalStorageData>({
-    favorites: [],
+    ratings: {},
+    categories: {},
     customNames: {},
+    categoryList: [],
   });
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -16,7 +18,20 @@ export function useLocalStorage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        setData(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        // Migrate old data if exists
+        if (parsed.favorites) {
+          const newData: LocalStorageData = {
+            ratings: {},
+            categories: {},
+            customNames: parsed.customNames || {},
+            categoryList: [],
+          };
+          setData(newData);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+        } else {
+          setData(parsed);
+        }
       } catch (e) {
         console.error('Error parsing localStorage:', e);
       }
@@ -29,12 +44,49 @@ export function useLocalStorage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
   };
 
-  const toggleFavorite = (fileId: string) => {
-    const newFavorites = data.favorites.includes(fileId)
-      ? data.favorites.filter((id) => id !== fileId)
-      : [...data.favorites, fileId];
-    
-    saveData({ ...data, favorites: newFavorites });
+  const setRating = (fileId: string, rating: number) => {
+    const newRatings = { ...data.ratings };
+    if (rating > 0 && rating <= 5) {
+      newRatings[fileId] = rating;
+    } else {
+      delete newRatings[fileId];
+    }
+    saveData({ ...data, ratings: newRatings });
+  };
+
+  const setCategory = (fileId: string, category: string) => {
+    const newCategories = { ...data.categories };
+    if (category.trim()) {
+      newCategories[fileId] = category;
+      // Add category to list if not exists
+      if (!data.categoryList.includes(category)) {
+        const newCategoryList = [...data.categoryList, category];
+        saveData({ ...data, categories: newCategories, categoryList: newCategoryList });
+        return;
+      }
+    } else {
+      delete newCategories[fileId];
+    }
+    saveData({ ...data, categories: newCategories });
+  };
+
+  const addCategory = (categoryName: string) => {
+    if (categoryName.trim() && !data.categoryList.includes(categoryName)) {
+      const newCategoryList = [...data.categoryList, categoryName];
+      saveData({ ...data, categoryList: newCategoryList });
+    }
+  };
+
+  const removeCategory = (categoryName: string) => {
+    const newCategoryList = data.categoryList.filter(c => c !== categoryName);
+    const newCategories = { ...data.categories };
+    // Remove category from all files
+    Object.keys(newCategories).forEach(fileId => {
+      if (newCategories[fileId] === categoryName) {
+        delete newCategories[fileId];
+      }
+    });
+    saveData({ ...data, categoryList: newCategoryList, categories: newCategories });
   };
 
   const setCustomName = (fileId: string, customName: string) => {
@@ -48,9 +100,14 @@ export function useLocalStorage() {
   };
 
   return {
-    favorites: data.favorites,
+    ratings: data.ratings,
+    categories: data.categories,
     customNames: data.customNames,
-    toggleFavorite,
+    categoryList: data.categoryList,
+    setRating,
+    setCategory,
+    addCategory,
+    removeCategory,
     setCustomName,
     isLoaded,
   };

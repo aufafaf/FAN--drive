@@ -1,17 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Video, Image as ImageIcon, Edit2, Check, X } from 'lucide-react';
+import { Star, Video, Image as ImageIcon, Edit2, Check, X, Folder } from 'lucide-react';
 import { MediaWithCustomName } from '@/types';
 import { useState } from 'react';
 
 interface MediaCardProps {
   media: MediaWithCustomName;
-  onToggleFavorite: (id: string) => void;
+  onOpenRating: (media: MediaWithCustomName) => void;
+  onOpenCategory: (media: MediaWithCustomName) => void;
   onUpdateName: (id: string, name: string) => void;
 }
 
-export default function MediaCard({ media, onToggleFavorite, onUpdateName }: MediaCardProps) {
+export default function MediaCard({ media, onOpenRating, onOpenCategory, onUpdateName }: MediaCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(media.customName || media.name);
 
@@ -35,7 +36,7 @@ export default function MediaCard({ media, onToggleFavorite, onUpdateName }: Med
             <img src={media.thumbnailLink} alt={displayName} loading="lazy" />
           ) : (
             <div className="placeholder-icon">
-              {media.isVideo ? <Video size={48} /> : <ImageIcon size={48} />}
+              {media.isVideo ? <Video size={32} /> : <ImageIcon size={32} />}
             </div>
           )}
           <div className="card-overlay">
@@ -45,12 +46,12 @@ export default function MediaCard({ media, onToggleFavorite, onUpdateName }: Med
         <div className="media-badge">
           {media.isVideo ? (
             <>
-              <Video size={14} />
+              <Video size={12} />
               Video
             </>
           ) : (
             <>
-              <ImageIcon size={14} />
+              <ImageIcon size={12} />
               Foto
             </>
           )}
@@ -78,14 +79,14 @@ export default function MediaCard({ media, onToggleFavorite, onUpdateName }: Med
                   className="edit-action-btn save"
                   title="Simpan"
                 >
-                  <Check size={16} />
+                  <Check size={14} />
                 </button>
                 <button
                   onClick={handleCancelEdit}
                   className="edit-action-btn cancel"
                   title="Batal"
                 >
-                  <X size={16} />
+                  <X size={14} />
                 </button>
               </div>
             </div>
@@ -99,24 +100,58 @@ export default function MediaCard({ media, onToggleFavorite, onUpdateName }: Med
                 className="edit-btn"
                 title="Edit nama"
               >
-                <Edit2 size={16} />
+                <Edit2 size={14} />
               </button>
             </>
           )}
         </div>
 
+        {/* Rating Stars Display */}
+        {media.rating && media.rating > 0 && (
+          <div className="card-rating-display">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={14}
+                fill={i < media.rating! ? '#fbbf24' : 'none'}
+                color={i < media.rating! ? '#fbbf24' : '#4b5563'}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Category Display */}
+        {media.category && (
+          <div className="card-category-display">
+            <Folder size={12} />
+            <span>{media.category}</span>
+          </div>
+        )}
+
         <div className="card-footer">
           <span className="file-size">{media.size}</span>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onToggleFavorite(media.id);
-            }}
-            className={`favorite-btn ${media.isFavorite ? 'active' : ''}`}
-            title={media.isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
-          >
-            <Heart size={18} fill={media.isFavorite ? 'currentColor' : 'none'} />
-          </button>
+          <div className="card-actions">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenCategory(media);
+              }}
+              className="action-btn-small"
+              title="Pilih kategori"
+            >
+              <Folder size={16} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenRating(media);
+              }}
+              className={`action-btn-small ${media.rating ? 'has-rating' : ''}`}
+              title="Beri rating"
+            >
+              <Star size={16} fill={media.rating ? '#fbbf24' : 'none'} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
