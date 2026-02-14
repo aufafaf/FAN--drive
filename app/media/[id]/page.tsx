@@ -15,7 +15,7 @@ export default function MediaDetailPage({ params }: { params: { id: string } }) 
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
 
-  const { favorites, customNames, toggleFavorite, setCustomName, isLoaded } = useLocalStorage();
+const { customNames, setCustomName, isLoaded } = useLocalStorage();
   const router = useRouter();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function MediaDetailPage({ params }: { params: { id: string } }) 
     );
   }
 
-  const isFavorite = favorites.includes(media.id);
+  // const isFavorite = favorites.includes(media.id);
   const displayName = customNames[media.id] || media.name;
 
   const handleSaveName = () => {
@@ -113,13 +113,13 @@ export default function MediaDetailPage({ params }: { params: { id: string } }) 
               <ExternalLink size={20} />
             </a>
           )}
-          <button
+          {/* <button
             onClick={() => toggleFavorite(media.id)}
             className={`action-btn ${isFavorite ? 'favorite-active' : ''}`}
             title={isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit'}
           >
             <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
-          </button>
+          </button> */}
         </div>
       </div>
 
