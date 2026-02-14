@@ -1,11 +1,13 @@
-
-
 'use client';
 
 import Link from 'next/link';
-import { Film } from 'lucide-react';
+import { Film, Settings } from 'lucide-react';
 
-export default function Navbar() {
+interface NavbarProps {
+  onOpenSettings?: () => void;
+}
+
+export default function Navbar({ onOpenSettings }: NavbarProps) {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -16,8 +18,14 @@ export default function Navbar() {
         
         <div className="navbar-links">
           <Link href="/" className="nav-link">
-            Beranda
+            Home
           </Link>
+          {onOpenSettings && (
+            <button onClick={onOpenSettings} className="nav-link-btn">
+              <Settings size={18} />
+              Settings
+            </button>
+          )}
         </div>
       </div>
     </nav>

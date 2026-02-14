@@ -99,6 +99,41 @@ export function useLocalStorage() {
     saveData({ ...data, customNames: newCustomNames });
   };
 
+  const exportData = (): string => {
+    return JSON.stringify(data, null, 2);
+  };
+
+  const importData = (jsonString: string): boolean => {
+    try {
+      const imported = JSON.parse(jsonString);
+      // Validate structure
+      if (imported && typeof imported === 'object') {
+        const newData: LocalStorageData = {
+          ratings: imported.ratings || {},
+          categories: imported.categories || {},
+          customNames: imported.customNames || {},
+          categoryList: imported.categoryList || [],
+        };
+        saveData(newData);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Error importing data:', e);
+      return false;
+    }
+  };
+
+  const clearAllData = () => {
+    const emptyData: LocalStorageData = {
+      ratings: {},
+      categories: {},
+      customNames: {},
+      categoryList: [],
+    };
+    saveData(emptyData);
+  };
+
   return {
     ratings: data.ratings,
     categories: data.categories,
@@ -109,6 +144,9 @@ export function useLocalStorage() {
     addCategory,
     removeCategory,
     setCustomName,
+    exportData,
+    importData,
+    clearAllData,
     isLoaded,
   };
 }
